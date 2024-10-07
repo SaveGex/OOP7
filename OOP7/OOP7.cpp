@@ -5,83 +5,121 @@
 
 using namespace std;
 
+
+void clear(stack<int>& stonks) {
+    while (!stonks.empty()) {
+        stonks.pop();
+    }
+}
+
+void reverse(stack<int>& stonks) {
+    stack<int> buffer_stack1, buffer_stack2;
+    while (!stonks.empty()) {
+        buffer_stack1.push(stonks.top());
+        stonks.pop();
+    }
+    while (!buffer_stack1.empty()) {
+        buffer_stack2.push(buffer_stack1.top());
+        buffer_stack1.pop();
+    }
+    while (!buffer_stack2.empty()) {
+        stonks.push(buffer_stack2.top());
+        buffer_stack2.pop();
+    }
+}
+
 int main() {
     srand(time(nullptr));
 
-    stack<int> stack, buffer_stack;
+    stack<int> stonks, buffer_stack;
     int choice = 0;
     vector<int> beautifull_not_stack;
 
+    cout << "green this is indexs \n";
     for (int i = 0; i < 10; i++) {
-        stack.push(rand() %10);
+        stonks.push(rand() %10);
+        cout << "\033[32m" << i << "\033[0m" << ' ';
     }
 
-    cout << "What build do you see?\n";
+    cout << endl;
 
-    while (!stack.empty()) {
-        int val = stack.top();
+    while (!stonks.empty()) {
+        int val = stonks.top();
         cout << val << ' ';
-        buffer_stack.push(stack.top());
-        stack.pop();
+        buffer_stack.push(stonks.top());
+        beautifull_not_stack.push_back(buffer_stack.top());
+        stonks.pop();
     }
     
     while (!buffer_stack.empty()) {
-        stack.push(buffer_stack.top());
-        beautifull_not_stack.push_back(buffer_stack.top());
+
+
         buffer_stack.pop();
     }
 
     while (choice != -1) {
-        cout << "\nDo your choice: ";
+
+        cout << "\nDo your choice of index: ";
         cin >> choice;
 
-        for (int i = 0; i < beautifull_not_stack.size(); i++) {
-            if (choice == beautifull_not_stack[i]) {
-                buffer_stack.push(i);
-            }
+        while(choice > 9 || choice < 0) {
+
+            cout << "\n\033[31mDo your choice of index from 0 to 9: \033[0m";
+            cin >> choice;
         }
 
-        int index = buffer_stack.top()-1;
+        int build_of_heigth = 0;
+        
+        for (int i = (choice-1); i >= 0; i--) {
 
-        while (true) {
 
-            if (choice < beautifull_not_stack[index]) {
+            if (beautifull_not_stack[choice] < beautifull_not_stack[i]) {
                 break;
             }
-            else if (choice == beautifull_not_stack[index]) {
-                cout << beautifull_not_stack[index] << endl;
+            else if (beautifull_not_stack[choice] == beautifull_not_stack[i]) {
+
+                buffer_stack.push(beautifull_not_stack[i]);
                 break;
             }
-            else if (choice > beautifull_not_stack[index]) {
-                cout << beautifull_not_stack[index] << ' ';
+            else if (beautifull_not_stack[choice] > beautifull_not_stack[i] && beautifull_not_stack[i] > build_of_heigth) {
+                buffer_stack.push(beautifull_not_stack[i]);
             }
-            if (index == 0) {
-                break;
-            }
-            index--;
+            (build_of_heigth < beautifull_not_stack[i]) ? build_of_heigth = beautifull_not_stack[i] : build_of_heigth = build_of_heigth;
+
         }
 
-        index = buffer_stack.top()+1;
+        clear(stonks);
 
-        while (true) {
+        build_of_heigth = 0;
+        for (int i = (choice + 1); i < beautifull_not_stack.size(); i++) {
             
-            if (choice < beautifull_not_stack[index]) {
+
+            if (beautifull_not_stack[choice] < beautifull_not_stack[i]) {
                 break;
             }
-            else if (choice == beautifull_not_stack[index]) {
-                cout << beautifull_not_stack[index] << endl;
+            else if (beautifull_not_stack[choice] == beautifull_not_stack[i]) {
+                stonks.push(beautifull_not_stack[i]);
                 break;
             }
-            else if (choice > beautifull_not_stack[index]) {
-                cout << beautifull_not_stack[index] << ' ';
+            else if (beautifull_not_stack[choice] > beautifull_not_stack[i] && beautifull_not_stack[i] > build_of_heigth) {
+                stonks.push(beautifull_not_stack[i]);
             }
-            if (index > beautifull_not_stack.size()) {
-                break;
-            }
-            index++;
+            (build_of_heigth < beautifull_not_stack[i]) ? build_of_heigth = beautifull_not_stack[i] : build_of_heigth = build_of_heigth;
+
         }
 
-        //buffer_stack
+        reverse(stonks);
+
+        while (!buffer_stack.empty()) {
+            cout << buffer_stack.top() << ' ';
+            buffer_stack.pop();
+        }
+        cout << beautifull_not_stack[choice] << ' ';
+        while (!stonks.empty()) {
+            cout << stonks.top() << ' ';
+            stonks.pop();
+        }
+
     }
 
 
